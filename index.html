@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <span>regex:</span>
+      <input type="text" id="regexInput" />
+    </div>
+    <div>
+      <span>string:</span>
+      <input type="text" id="string" />
+    </div>
+    <div>
+      <span>是否命中：</span>
+      <span id="result"></span>
+      <span>命中dfa节点</span>
+      <span id="state"></span>
+    </div>
+
+    <button id="nfaGraphBtn">show NFA graph</button>
+    <button id="dfaGraphBtn">show DFA graph</button>
+    <button id="test">test</button>
+
+    <div id="graph"></div>
+    <pre id="dotscript"></pre>
+    <script src="./javscript-state-machine.js"></script>
+    <script src="./jquery/dist/jquery.min.js"></script>
+    <script src="./viz.js/viz-lite.js"></script>
+    <script src="./regex2RPN.js"></script>
+    <script src="./NFA.js"></script>
+    <script src="./DFA.js"></script>
+    <script src="./dfaToDotScript.js"></script>
+    <script src="./nfaToDotScript.js"></script>
+    <script src="./stateMachine.js"></script>
+    <script src="./main.js"></script>
+  </body>
+</html>
