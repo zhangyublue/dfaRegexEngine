@@ -1,0 +1,39 @@
+{
+  "name": "dfa-regex-engine",
+  "version": "1.0.0",
+  "description": "DFA Regex Engine with TypeScript support",
+  "main": "dist/bundle.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack serve --mode development",
+    "build:dev": "webpack --mode development",
+    "type-check": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "regex",
+    "dfa",
+    "nfa",
+    "typescript",
+    "webpack"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jquery": "^3.5.29",
+    "copy-webpack-plugin": "^13.0.1",
+    "css-loader": "^6.10.0",
+    "html-webpack-plugin": "^5.6.0",
+    "javascript-state-machine": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "style-loader": "^3.3.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.2",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.2"
+  },
+  "dependencies": {
+    "jquery": "^3.7.1"
+  }
+}

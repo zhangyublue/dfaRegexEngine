@@ -1,4 +1,9 @@
-const OperatorPriority = {
+interface Token {
+  type: string;
+  value: string;
+}
+
+const OperatorPriority: { [key: string]: number } = {
   "\\": 4,
   "*": 4,
   "?": 4,
@@ -9,14 +14,14 @@ const OperatorPriority = {
 };
 
 // 将正则表达式转化为逆波兰表达式
-function regex2RPN(str) {
+export function regex2RPN(str: string): Token[] {
   // 逆波兰式表达式输出结果
-  const output = [];
+  const output: Token[] = [];
   // 操作符栈
-  const operators = [];
+  const operators: Token[] = [];
 
   for (
-    let character, i = 0, isLastCharacter = false, len = str.length;
+    let character: string, i = 0, isLastCharacter = false, len = str.length;
     i < len;
     i++
   ) {
@@ -48,13 +53,16 @@ function regex2RPN(str) {
           value: ".",
         });
       }
-      operators.push(character);
+      operators.push({
+        type: "OPERATOR",
+        value: character,
+      });
       isLastCharacter = false;
       continue;
     }
 
     if (character === ")") {
-      let op;
+      let op: Token | undefined;
 
       // 将栈顶的操作符弹出，直到遇到左括号
       while ((op = operators.pop())) {
@@ -65,11 +73,10 @@ function regex2RPN(str) {
         // 将左括号前面的操作符弹出加入到输出结果中
         output.push(op);
       }
-      if (op.value !== "(") {
-        throw new Error(`no "(" matcharacter ")" at [${i}] of "${str}"`);
+      if (!op || op.value !== "(") {
+        throw new Error(`no "(" match character ")" at [${i}] of "${str}"`);
       }
       isLastCharacter = true;
-      // isEscapeCharacter = false;
       continue;
     }
 
@@ -87,12 +94,12 @@ function regex2RPN(str) {
     isLastCharacter = true;
   }
 
-  function pushOperator(op) {
-    let top;
-    const priority = OperatorPriority[op];
+  function pushOperator(op: Token): void {
+    let top: Token | undefined;
+    const priority = OperatorPriority[op.value];
     while ((top = operators.pop())) {
       // 如果栈顶的操作符优先级大于等于当前操作符，那么就将栈顶的操作符弹出加入到输出结果中
-      if (OperatorPriority[top] >= priority) {
+      if (OperatorPriority[top.value] >= priority) {
         output.push(top);
       } else {
         // 如果栈顶的操作符优先级小于当前操作符，那么就将栈顶的操作符压入栈中
@@ -103,15 +110,13 @@ function regex2RPN(str) {
     operators.push(op);
   }
 
-  let op;
-  // 将栈中剩余的操作符弹出
-  while ((op = operators.pop())) {
-    if (op === "(") {
-      throw new Error(`not matcharactered "(" of "${str}"`);
+  // 将剩余的操作符弹出加入到输出结果中
+  while (operators.length > 0) {
+    const op = operators.pop();
+    if (op && op.value !== "(") {
+      output.push(op);
     }
-    output.push(op);
   }
 
-  console.warn(output.map((e) => e.value).join(""));
   return output;
 }

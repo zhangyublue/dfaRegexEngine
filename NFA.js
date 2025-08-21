@@ -96,8 +96,8 @@ class NFA {
     return NFA.createFromPostfixExpression(regex2RPN(str));
   }
 
-  static createFromPostfixExpression(str) {
-    if (typeof str !== "string") return null;
+  static createFromPostfixExpression(RPN) {
+    if (!Array.isArray(RPN) || RPN.length === 0) return null;
 
     let uuidState = 0;
     let uuidTransition = 0;
@@ -123,109 +123,111 @@ class NFA {
       return transition;
     }
 
-    const frag_stack = [];
+    const fragStack = [];
 
-    for (let ch, i = 0, len = str.length; i < len; i++) {
-      ch = str[i];
-      switch (ch) {
-        case "|":
-          {
-            // 取栈顶的两个片段
-            const f2 = frag_stack.pop();
-            const f1 = frag_stack.pop();
-            // 创建新的开始和结束状态
-            const start = newState();
-            const end = newState();
+    for (let token, i = 0, len = RPN.length; i < len; i++) {
+      token = RPN[i];
+      if (token.type === "CHARACTER" || token.type === "OPERATOR") {
+        switch (token.value) {
+          case "|":
+            {
+              // 取栈顶的两个片段
+              const f2 = fragStack.pop();
+              const f1 = fragStack.pop();
+              // 创建新的开始和结束状态
+              const start = newState();
+              const end = newState();
 
-            // 将新的开始状态与两个片段的开始状态相连
-            newTransition(start, f1.start);
-            newTransition(start, f2.start);
-            // 将两个片段的结束状态与新的结束状态相连
-            newTransition(f1.end, end);
-            newTransition(f2.end, end);
+              // 将新的开始状态与两个片段的开始状态相连
+              newTransition(start, f1.start);
+              newTransition(start, f2.start);
+              // 将两个片段的结束状态与新的结束状态相连
+              newTransition(f1.end, end);
+              newTransition(f2.end, end);
 
-            frag_stack.push(new Fragment(start, end));
-          }
-          break;
-        case ".":
-          {
-            // 取栈顶的两个片段
-            const f2 = frag_stack.pop();
-            const f1 = frag_stack.pop();
+              fragStack.push(new Fragment(start, end));
+            }
+            break;
+          case ".":
+            {
+              // 取栈顶的两个片段
+              const f2 = fragStack.pop();
+              const f1 = fragStack.pop();
 
-            // 将f1的结束状态与f2的开始状态相连
-            f2.start.transitions.forEach((transition_id) => {
-              const transition = transition_map.get(transition_id);
-              transition.from = f1.end.id;
-              f1.end.transitions.push(transition_id);
-            });
+              // 将f1的结束状态与f2的开始状态相连
+              f2.start.transitions.forEach((transition_id) => {
+                const transition = transition_map.get(transition_id);
+                transition.from = f1.end.id;
+                f1.end.transitions.push(transition_id);
+              });
 
-            // 删除f2的开始状态
-            state_map.delete(f2.start.id);
+              // 删除f2的开始状态
+              state_map.delete(f2.start.id);
 
-            frag_stack.push(new Fragment(f1.start, f2.end));
-          }
-          break;
-        case "*":
-          {
-            // 取栈顶的片段
-            const f = frag_stack.pop();
-            // 创建新的开始和结束状态
-            const start = newState();
-            const end = newState();
+              fragStack.push(new Fragment(f1.start, f2.end));
+            }
+            break;
+          case "*":
+            {
+              // 取栈顶的片段
+              const f = fragStack.pop();
+              // 创建新的开始和结束状态
+              const start = newState();
+              const end = newState();
 
-            // 将新的开始状态与片段的开始状态相连
-            newTransition(start, f.start);
-            // 将片段的结束状态与新的结束状态相连
-            newTransition(start, end);
-            // 将片段的结束状态与片段的开始状态相连
-            newTransition(f.end, f.start);
-            // 将片段的结束状态与新的结束状态相连
-            newTransition(f.end, end);
+              // 将新的开始状态与片段的开始状态相连
+              newTransition(start, f.start);
+              // 将片段的结束状态与新的结束状态相连
+              newTransition(start, end);
+              // 将片段的结束状态与片段的开始状态相连
+              newTransition(f.end, f.start);
+              // 将片段的结束状态与新的结束状态相连
+              newTransition(f.end, end);
 
-            frag_stack.push(new Fragment(start, end));
-          }
-          break;
-        case "?":
-          {
-            const f = frag_stack.pop();
-            const start = newState();
-            const end = newState();
+              fragStack.push(new Fragment(start, end));
+            }
+            break;
+          case "?":
+            {
+              const f = fragStack.pop();
+              const start = newState();
+              const end = newState();
 
-            newTransition(start, f.start);
-            newTransition(start, end);
-            newTransition(f.end, end);
+              newTransition(start, f.start);
+              newTransition(start, end);
+              newTransition(f.end, end);
 
-            frag_stack.push(new Fragment(start, end));
-          }
-          break;
-        case "+":
-          {
-            const f = frag_stack.pop();
-            const start = newState();
-            const end = newState();
+              fragStack.push(new Fragment(start, end));
+            }
+            break;
+          case "+":
+            {
+              const f = fragStack.pop();
+              const start = newState();
+              const end = newState();
 
-            newTransition(start, f.start);
-            newTransition(f.end, f.start);
-            newTransition(f.end, end);
+              newTransition(start, f.start);
+              newTransition(f.end, f.start);
+              newTransition(f.end, end);
 
-            frag_stack.push(new Fragment(start, end));
-          }
-          break;
-        default:
-          {
-            const start = newState();
-            const end = newState();
+              fragStack.push(new Fragment(start, end));
+            }
+            break;
+          default:
+            {
+              const start = newState();
+              const end = newState();
 
-            newTransition(start, end, ch);
+              newTransition(start, end, ch);
 
-            frag_stack.push(new Fragment(start, end));
-          }
-          break;
+              fragStack.push(new Fragment(start, end));
+            }
+            break;
+        }
       }
     }
 
-    const frag = frag_stack.pop();
+    const frag = fragStack.pop();
     nfa.start = frag.start.id;
     nfa.end = frag.end.id;
     return nfa;

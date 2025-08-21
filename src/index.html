@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DFA Regex Engine</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .input-group {
+        margin: 10px 0;
+      }
+      .input-group span {
+        display: inline-block;
+        width: 80px;
+        font-weight: bold;
+      }
+      .input-group input {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 200px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #result,
+      #state {
+        font-weight: bold;
+        color: #28a745;
+      }
+      #graph {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        padding: 20px;
+        min-height: 400px;
+      }
+      #dotscript {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DFA Regex Engine</h1>
+
+    <div class="input-group">
+      <span>Regex:</span>
+      <input type="text" id="regexInput" placeholder="Enter regex pattern" />
+    </div>
+
+    <div class="input-group">
+      <span>String:</span>
+      <input type="text" id="string" placeholder="Enter test string" />
+    </div>
+
+    <div class="input-group">
+      <span>Result:</span>
+      <span id="result"> - </span>
+      <span>State:</span>
+      <span id="state"> - </span>
+    </div>
+
+    <div>
+      <button id="nfaGraphBtn">Show NFA Graph</button>
+      <button id="dfaGraphBtn">Show DFA Graph</button>
+      <button id="test">Test String</button>
+    </div>
+
+    <div id="graph"></div>
+    <pre id="dotscript"></pre>
+
+    <!-- External Libraries -->
+    <script src="../javscript-state-machine.js"></script>
+    <script src="./viz/viz-lite.js"></script>
+  </body>
+</html>
