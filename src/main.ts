@@ -43,20 +43,25 @@ $("#dfaGraphBtn").on("click", () => {
 });
 
 $("#test").on("click", () => {
-  regStr = $("#regexInput").val() as string;
-  const dfa = getDfa(regStr);
-  if (!dfa) return;
-  const stateMachine = getStateMachine(dfa);
-  const str = $("#string").val() as string;
+  try {
+    regStr = $("#regexInput").val() as string;
+    const dfa = getDfa(regStr);
+    if (!dfa) return;
+    const stateMachine = getStateMachine(dfa);
+    const str = $("#string").val() as string;
 
-  str.split("").forEach((char: string) => {
-    stateMachine.step(char);
-  });
+    str.split("").forEach((char: string) => {
+      stateMachine.step(char);
+    });
 
-  if (dfa.acceptStates.includes(stateMachine.state)) {
-    $("#result").text("true");
-    $("#state").text(stateMachine.state);
-  } else {
+    if (dfa.acceptStates.includes(stateMachine.state)) {
+      $("#result").text("true");
+      $("#state").text(stateMachine.state);
+    } else {
+      $("#result").text("false");
+      $("#state").text("");
+    }
+  } catch (error) {
     $("#result").text("false");
     $("#state").text("");
   }
