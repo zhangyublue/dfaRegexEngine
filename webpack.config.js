@@ -56,6 +56,7 @@ module.exports = (env, argv) => {
       new CopyPlugin({
         patterns: [
           { from: 'src/viz/viz-lite.js', to: 'viz/viz-lite.js' },
+          { from: 'src/javascript-state-machine.js', to: 'javascript-state-machine.js' },
         ],
       }),
     ],

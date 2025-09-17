@@ -1,7 +1,7 @@
-import { NFAJSON } from './NFA';
+import { DFAInterface } from './DFA';
 
 interface StateMachineConfig {
-  init: number;
+  init: string;
   transitions: Array<{
     from: string;
     name: string;
@@ -10,16 +10,18 @@ interface StateMachineConfig {
 }
 
 interface StateMachine {
-  state: number;
+  state: string;
   step: (input: string) => void;
 }
 
 // 声明全局的StateMachine构造函数
 declare global {
-  function StateMachine(config: StateMachineConfig): StateMachine;
+  interface Window {
+    StateMachine: new (config: StateMachineConfig) => StateMachine;
+  }
 }
 
-export function getStateMachine(dfa: NFAJSON): StateMachine {
+export function getStateMachine(dfa: DFAInterface): StateMachine {
   const stateMachineConfigTransitions: Array<{
     from: string;
     name: string;
@@ -38,7 +40,7 @@ export function getStateMachine(dfa: NFAJSON): StateMachine {
     });
   });
 
-  return new (window as any).StateMachine({
+  return new window.StateMachine({
     init: dfa.startState,
     transitions: stateMachineConfigTransitions,
   });

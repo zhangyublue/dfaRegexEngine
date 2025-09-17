@@ -1,7 +1,7 @@
-import { NFAJSON } from './NFA';
+import { DFAInterface } from './DFA';
 
 // dfa 转化图形配置
-export function dfaToDotScript(dfa: NFAJSON): string {
+export function dfaToDotScript(dfa: DFAInterface): string {
   const initialState = dfa.startState;
   const finalStates = Array.from(dfa.acceptStates).join(", ");
 

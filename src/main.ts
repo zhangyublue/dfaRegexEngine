@@ -1,17 +1,16 @@
-import { NFA } from "./NFA";
-import { nfaToDfa } from "./NFA";
+import { createFromRegexp, toJSON } from "./NFA";
+import { nfaToDfa } from "./DFA";
 import { nfaToDotScript } from "./nfaToDotScript";
 import { dfaToDotScript } from "./dfaToDotScript";
 import { getStateMachine } from "./stateMachine";
 import $ from "jquery";
 
-// 类型声明已在types.d.ts中全局声明
 let regStr: string = "";
 
 const getNfa = (str: string) => {
-  const nfa = NFA.createFromRegexp(str);
+  const nfa = createFromRegexp(str);
   if (!nfa) return null;
-  return nfa.toJSON();
+  return toJSON(nfa);
 };
 
 const getDfa = (str: string) => {
